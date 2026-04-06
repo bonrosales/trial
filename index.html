@@ -53,46 +53,116 @@ body{background:var(--dk);color:var(--txt);font-family:'DM Sans',sans-serif;over
 /* ─── HERO ─── */
 #hero{position:relative;z-index:1;padding:5rem 2rem;min-height:calc(100vh - var(--hdr));display:flex;align-items:center;}
 .hero-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:440px 1fr;gap:4rem;align-items:center;width:100%;}
-#isc{perspective:1200px;width:100%;max-width:440px;height:278px;}
-#id-card{width:100%;height:100%;transform-style:preserve-3d;transition:transform .08s linear;position:relative;border-radius:22px;}
-.idf{position:absolute;inset:0;border-radius:22px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;}
-.id-front{background:linear-gradient(145deg,#0a0a0a,#111);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.12);box-shadow:0 24px 64px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.08);}
-.id-back{background:linear-gradient(145deg,#080808,#0d0d0d);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(0,229,204,.18);transform:rotateY(180deg);box-shadow:0 24px 64px rgba(0,0,0,.85);}
-.id-ct{position:relative;z-index:2;padding:1.35rem 1.65rem;height:100%;display:flex;flex-direction:column;gap:.48rem;}
-.id-hr{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,.11);padding-bottom:.55rem;}
+#isc{perspective:1200px;width:100%;max-width:460px;height:290px;}
+#id-card{width:100%;height:100%;transform-style:preserve-3d;transition:transform .08s linear;position:relative;border-radius:20px;}
+.idf{position:absolute;inset:0;border-radius:20px;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;}
 
-/* ── AIV1 brand logo in card ── */
-.id-brand-logo{display:flex;align-items:center;gap:.35rem;}
-.id-brand-logo .logo-aiv{font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#1a6fff;letter-spacing:-.04em;line-height:1;}
-.id-brand-logo .logo-one{font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#F04D5C;letter-spacing:-.04em;line-height:1;}
-.id-brand-logo .logo-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);margin-top:2px;}
+/* ── FRONT: deep blue gradient like the reference ── */
+.id-front{
+  background:linear-gradient(135deg,#0d4a8a 0%,#1565c0 30%,#0d6eaa 60%,#0a3d72 100%);
+  border:1px solid rgba(255,255,255,.2);
+  box-shadow:0 24px 64px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.15);
+  position:relative;
+}
+/* Diagonal sheen overlay */
+.id-front::before{
+  content:'';position:absolute;inset:0;border-radius:20px;pointer-events:none;
+  background:linear-gradient(135deg,rgba(255,255,255,.18) 0%,transparent 45%,rgba(255,255,255,.06) 100%);
+}
+/* Subtle polygon texture */
+.id-front::after{
+  content:'';position:absolute;inset:0;border-radius:20px;pointer-events:none;
+  background:
+    linear-gradient(60deg,rgba(255,255,255,.04) 25%,transparent 25%),
+    linear-gradient(120deg,rgba(255,255,255,.03) 25%,transparent 25%);
+  background-size:80px 80px;
+}
 
-.id-cls{font-size:.5rem;color:var(--teal);border:1px solid var(--teal);padding:.09rem .36rem;border-radius:3px;letter-spacing:.1em;font-weight:800;background:rgba(0,229,204,.1);}
-.id-mid{display:flex;gap:1.15rem;align-items:center;flex:1;}
-.id-av{width:68px;height:68px;border-radius:12px;flex-shrink:0;background:linear-gradient(135deg,rgba(0,229,204,.18),rgba(0,229,204,.04));border:1.5px solid rgba(0,229,204,.28);display:flex;align-items:center;justify-content:center;font-size:1.95rem;box-shadow:0 0 18px rgba(0,229,204,.1);}
-.id-info{flex:1;}
-.id-name{font-family:'Sora',sans-serif;font-size:1.05rem;font-weight:800;color:var(--txt);line-height:1.15;margin-bottom:.16rem;}
-.id-tl{font-size:.68rem;color:var(--txt3);font-weight:600;margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.06em;}
+/* ── FRONT layout ── */
+.id-cf{position:relative;z-index:2;width:100%;height:100%;padding:1rem 1.2rem;display:flex;flex-direction:column;}
 
-/* ── Gold SIM + NFC ── */
-.id-extras{display:flex;align-items:center;gap:.65rem;margin-top:.18rem;}
-.id-sim{width:30px;height:22px;position:relative;border-radius:3px;background:linear-gradient(135deg,#C9A84C,#F5D57A,#A8742A,#E6C35E,#C9A84C);box-shadow:0 1px 6px rgba(201,168,76,.5),inset 0 1px 0 rgba(255,255,255,.3);display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr 1fr;gap:1px;padding:3px;}
-.id-sim::before{content:'';position:absolute;inset:0;border-radius:3px;background:linear-gradient(135deg,rgba(255,255,255,.25),transparent 50%,rgba(0,0,0,.12));pointer-events:none;}
-.id-sim-cell{background:rgba(0,0,0,.35);border-radius:1px;}
+/* Top row: brand left, barcode+avatar right */
+.id-top-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.6rem;}
+.id-brand-logo{display:flex;align-items:baseline;gap:0;}
+.id-brand-logo .logo-aiv{font-family:'Sora',sans-serif;font-size:1.35rem;font-weight:900;color:#fff;letter-spacing:-.02em;text-shadow:0 1px 4px rgba(0,0,0,.4);}
+.id-brand-logo .logo-one{font-family:'Sora',sans-serif;font-size:1.35rem;font-weight:900;color:#F04D5C;letter-spacing:-.02em;text-shadow:0 1px 4px rgba(0,0,0,.4);}
+
+/* Barcode + avatar stacked right */
+.id-top-right{display:flex;flex-direction:column;align-items:flex-end;gap:.35rem;}
+.id-barcode-wrap{display:flex;gap:.5px;align-items:flex-end;}
+.id-barcode-wrap span{display:block;background:rgba(255,255,255,.9);border-radius:.5px;}
+.id-avatar-box{
+  width:72px;height:72px;border-radius:8px;
+  background:linear-gradient(135deg,#b8d4f0,#c9dcf0,#9fbde8);
+  border:2px solid rgba(255,255,255,.6);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.6rem;overflow:hidden;
+  box-shadow:0 2px 8px rgba(0,0,0,.3);
+}
+.id-avatar-box img{width:100%;height:100%;object-fit:cover;}
+
+/* Middle: SIM + NFC + phone row */
+.id-mid-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem;flex:1;align-content:flex-end;flex-wrap:wrap;}
+
+/* Gold SIM chip */
+.id-sim{
+  width:36px;height:28px;border-radius:4px;flex-shrink:0;
+  background:linear-gradient(135deg,#B8860B,#F5D57A,#DAA520,#F0C040,#B8860B);
+  box-shadow:0 2px 8px rgba(184,134,11,.6),inset 0 1px 0 rgba(255,255,255,.4);
+  display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:1fr 1fr 1fr;gap:1.5px;padding:4px;
+  position:relative;
+}
+.id-sim::before{content:'';position:absolute;inset:0;border-radius:4px;background:linear-gradient(135deg,rgba(255,255,255,.35),transparent 55%);pointer-events:none;}
+.id-sim-cell{background:rgba(100,70,0,.5);border-radius:1px;}
 .id-sim-cell.notch{background:transparent;}
-.id-nfc{width:22px;height:22px;display:flex;align-items:center;justify-content:center;position:relative;}
-.id-nfc::before,.id-nfc::after{content:'';position:absolute;border:1.5px solid rgba(0,229,204,.6);border-radius:50%;}
-.id-nfc::before{width:22px;height:22px;opacity:.4;}
-.id-nfc::after{width:14px;height:14px;opacity:.7;}
-.nfc-inner{width:7px;height:7px;border:1.5px solid var(--teal);border-radius:50%;}
 
-.id-fr{border-top:1px solid rgba(255,255,255,.09);padding-top:.48rem;display:flex;justify-content:space-between;align-items:center;}
-.id-bc{display:flex;gap:1px;align-items:flex-end;height:20px;}
-.id-bc span{display:block;width:2px;background:rgba(255,255,255,.32);}
-.id-sr{font-size:.48rem;color:var(--txt3);letter-spacing:.1em;font-weight:600;}
-.id-bk{padding:1.35rem 1.65rem;height:100%;display:flex;flex-direction:column;gap:.48rem;justify-content:center;}
-.id-stripe{height:30px;background:rgba(255,255,255,.07);border-radius:4px;margin-bottom:.28rem;}
-.id-note{font-size:.56rem;color:rgba(0,229,204,.78);line-height:1.6;text-align:center;border:1px solid rgba(0,229,204,.16);padding:.48rem;border-radius:7px;}
+/* NFC waves SVG-style */
+.id-nfc-wrap{display:flex;align-items:center;gap:.2rem;}
+.id-nfc-waves{display:flex;align-items:center;gap:2px;}
+.id-nfc-arc{display:block;border:2px solid rgba(255,255,255,.85);border-left:none;border-radius:0 50px 50px 0;}
+
+/* Phone number */
+.id-phone{font-family:'Sora',sans-serif;font-size:.92rem;font-weight:700;color:#fff;letter-spacing:.12em;text-shadow:0 1px 4px rgba(0,0,0,.4);}
+
+/* Name at bottom */
+.id-name-row{margin-top:auto;}
+.id-name{font-family:'Sora',sans-serif;font-size:1.05rem;font-weight:800;color:#fff;letter-spacing:.08em;text-transform:uppercase;text-shadow:0 1px 6px rgba(0,0,0,.5);}
+.id-name-sub{font-size:.52rem;color:rgba(255,255,255,.65);letter-spacing:.12em;text-transform:uppercase;font-weight:600;margin-top:.15rem;}
+
+/* ── BACK ── */
+.id-back{
+  background:linear-gradient(135deg,#0d4a8a 0%,#1565c0 30%,#0d6eaa 60%,#0a3d72 100%);
+  border:1px solid rgba(255,255,255,.15);
+  transform:rotateY(180deg);
+  box-shadow:0 24px 64px rgba(0,0,0,.8);
+  position:relative;
+}
+.id-back::before{content:'';position:absolute;inset:0;border-radius:20px;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.12) 0%,transparent 50%);}
+.id-cb{position:relative;z-index:2;width:100%;height:100%;display:flex;flex-direction:column;}
+
+/* Magnetic stripe */
+.id-mag-stripe{
+  width:100%;height:52px;margin-top:1.1rem;
+  background:linear-gradient(180deg,#1a1a1a 0%,#0a0a0a 40%,#2a2a2a 70%,#111 100%);
+  box-shadow:inset 0 2px 4px rgba(0,0,0,.8),inset 0 -1px 2px rgba(255,255,255,.05);
+  flex-shrink:0;
+}
+
+/* Signature strip */
+.id-sig-area{display:flex;align-items:stretch;margin:.65rem 1.1rem 0;border-radius:4px;overflow:hidden;border:1px solid rgba(255,255,255,.2);box-shadow:0 1px 4px rgba(0,0,0,.3);}
+.id-sig-lines{flex:1;background:#f8f9fa;display:flex;flex-direction:column;justify-content:space-evenly;padding:.25rem .4rem;gap:2px;}
+.id-sig-line{height:1.5px;background:rgba(180,200,220,.7);border-radius:1px;}
+.id-sig-cvv{
+  width:44px;background:#e8ecf0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Sora',sans-serif;font-size:.85rem;font-weight:800;
+  color:#333;border-left:1px solid rgba(0,0,0,.12);
+}
+
+/* QR code area */
+.id-qr-row{display:flex;justify-content:center;align-items:center;flex:1;padding:.5rem;}
+canvas#id-qr{border:3px solid #fff;background:#fff;border-radius:4px;image-rendering:pixelated;}
+
 .flip-hint{font-size:.62rem;color:var(--txt3);font-weight:600;letter-spacing:.08em;text-align:center;margin-top:.52rem;}
 
 /* ── HERO INTRO ── */
@@ -551,58 +621,68 @@ body{background:var(--dk);color:var(--txt);font-family:'DM Sans',sans-serif;over
         <div id="id-card">
           <!-- FRONT -->
           <div class="idf id-front">
-            <div class="id-ct">
-              <div class="id-hr">
-                <!-- AIV1 Brand Logo instead of text org -->
+            <div class="id-cf">
+              <!-- Top row: AIV1 logo LEFT, barcode+avatar RIGHT -->
+              <div class="id-top-row">
                 <div class="id-brand-logo">
-                  <div class="logo-aiv">AIV</div>
-                  <div class="logo-dot"></div>
-                  <div class="logo-one">1</div>
+                  <span class="logo-aiv">AIV</span><span class="logo-one">1</span>
                 </div>
-                <div class="id-cls" id="h-cl-el">IT SPECIALIST</div>
+                <div class="id-top-right">
+                  <!-- Barcode -->
+                  <div class="id-barcode-wrap" id="h-bc-el"></div>
+                  <!-- Avatar -->
+                  <div class="id-avatar-box" id="h-av-el">👤</div>
+                </div>
               </div>
-              <div class="id-mid">
-                <div class="id-av" id="h-av-el">💻</div>
-                <div class="id-info">
-                  <div class="id-name" id="h-nm-el">Mark Aivone D. Rosales</div>
-                  <div class="id-tl" id="h-tl-el">IT Support Specialist</div>
-                  <!-- SIM + NFC — no chips -->
-                  <div class="id-extras">
-                    <div class="id-sim">
-                      <div class="id-sim-cell notch"></div>
-                      <div class="id-sim-cell"></div>
-                      <div class="id-sim-cell"></div>
-                      <div class="id-sim-cell"></div>
-                      <div class="id-sim-cell"></div>
-                      <div class="id-sim-cell"></div>
-                      <div class="id-sim-cell"></div>
-                      <div class="id-sim-cell"></div>
-                      <div class="id-sim-cell"></div>
-                    </div>
-                    <div class="id-nfc">
-                      <div class="nfc-inner"></div>
-                    </div>
-                    <span style="font-size:.52rem;color:var(--txt3);font-weight:600;letter-spacing:.06em;">NFC</span>
+              <!-- SIM chip + NFC waves + phone -->
+              <div class="id-mid-row">
+                <div class="id-sim">
+                  <div class="id-sim-cell notch"></div>
+                  <div class="id-sim-cell"></div>
+                  <div class="id-sim-cell"></div>
+                  <div class="id-sim-cell"></div>
+                  <div class="id-sim-cell"></div>
+                  <div class="id-sim-cell"></div>
+                  <div class="id-sim-cell"></div>
+                  <div class="id-sim-cell"></div>
+                  <div class="id-sim-cell"></div>
+                </div>
+                <!-- NFC arcs -->
+                <div class="id-nfc-wrap">
+                  <div class="id-nfc-waves">
+                    <span class="id-nfc-arc" style="width:8px;height:12px;border-width:1.8px;opacity:.5;"></span>
+                    <span class="id-nfc-arc" style="width:13px;height:20px;border-width:1.8px;opacity:.7;"></span>
+                    <span class="id-nfc-arc" style="width:18px;height:28px;border-width:1.8px;opacity:.9;"></span>
                   </div>
                 </div>
+                <div class="id-phone" id="h-cp-el">0919 290 7124</div>
               </div>
-              <div class="id-fr">
-                <div><div class="id-bc" id="h-bc-el"></div></div>
-                <div class="id-sr" id="h-sr-el">ISSUED: 2025 · UID-7124</div>
+              <!-- Name bottom -->
+              <div class="id-name-row">
+                <div class="id-name" id="h-nm-el">MARK AIVONE D. ROSALES</div>
+                <div class="id-name-sub" id="h-tl-el">IT SUPPORT SPECIALIST · AIV1</div>
               </div>
             </div>
           </div>
           <!-- BACK -->
           <div class="idf id-back">
-            <div class="id-bk">
-              <div class="id-stripe"></div>
-              <div style="display:flex;justify-content:center;margin:.22rem 0;">
-                <canvas id="id-qr" width="62" height="62" style="border:1px solid rgba(0,229,204,.28);background:rgba(0,0,0,.5);image-rendering:pixelated;border-radius:4px;"></canvas>
+            <div class="id-cb">
+              <!-- Magnetic stripe -->
+              <div class="id-mag-stripe"></div>
+              <!-- Signature strip + CVV -->
+              <div class="id-sig-area">
+                <div class="id-sig-lines">
+                  <div class="id-sig-line"></div>
+                  <div class="id-sig-line"></div>
+                  <div class="id-sig-line"></div>
+                  <div class="id-sig-line"></div>
+                  <div class="id-sig-line"></div>
+                </div>
+                <div class="id-sig-cvv">123</div>
               </div>
-              <div class="id-note" id="h-sub-el">Digitally Connected. Explore and Enjoy!</div>
-              <div style="font-size:.5rem;color:rgba(0,229,204,.65);line-height:1.9;margin-top:.3rem;text-align:center;">
-                <div>📞 <span id="h-cp-el">09192907124</span></div>
-                <div>✉ <span id="h-email-el"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="610a13000c0a04001221060c00080d4f020e0c">[email&#160;protected]</a></span></div>
+              <!-- QR code -->
+              <div class="id-qr-row">
+                <canvas id="id-qr" width="80" height="80"></canvas>
               </div>
             </div>
           </div>
@@ -889,12 +969,16 @@ body{background:var(--dk);color:var(--txt);font-family:'DM Sans',sans-serif;over
           <div class="fg"><label class="fl">Company</label><input class="fi" id="ah-cmp" oninput="S.h.company=this.value;st('h-cmp-el',this.value);save()"></div>
         </div></div>
         <div class="atp" id="ah-tab-card"><div class="adc">
-          <div class="fg"><label class="fl">Title Line</label><input class="fi" id="ah-tl" oninput="S.h.titleLine=this.value;updCard();save()"></div>
-          <div class="fg"><label class="fl">Avatar</label><input class="fi" id="ah-av" oninput="S.h.avatar=this.value;updCard();save()"></div>
+          <div class="fg"><label class="fl">Title Line / Role</label><input class="fi" id="ah-tl" oninput="S.h.titleLine=this.value;updCard();save()"></div>
+          <div class="fg"><label class="fl">Avatar Emoji (fallback)</label><input class="fi" id="ah-av" oninput="S.h.avatar=this.value;updCard();save()"></div>
+          <div class="fg"><label class="fl">Avatar Photo URL</label><input class="fi" id="ah-avurl" placeholder="https://... or upload below" oninput="S.h.avatarUrl=this.value;updCard();save()"></div>
+          <div class="fg"><label class="fl">Upload Avatar Photo</label>
+            <label class="btn sm bgl" style="cursor:pointer;">⬆ Upload Photo<input type="file" accept="image/*" onchange="avatarUpload(this)" style="display:none;"></label>
+          </div>
           <div class="fg"><label class="fl">Clearance Tag</label><input class="fi" id="ah-cl" oninput="S.h.clearance=this.value;updCard();save()"></div>
-          <div class="fg"><label class="fl">Serial / Issued</label><input class="fi" id="ah-sr" oninput="S.h.serial=this.value;updCard();save()"></div>
-          <div class="fg"><label class="fl">Email (back of card)</label><input class="fi" id="ah-em" oninput="S.h.email=this.value;st('h-email-el',this.value);save()"></div>
-          <div class="fg"><label class="fl">Back Text</label><textarea class="fi" id="ah-sub" rows="2" oninput="S.h.sub=this.value;st('h-sub-el',this.value);save()"></textarea></div>
+          <div class="fg"><label class="fl">Serial / Phone (CP: 09XXXXXXXXX)</label><input class="fi" id="ah-sr" oninput="S.h.serial=this.value;updCard();save()"></div>
+          <div class="fg"><label class="fl">Email (back of card)</label><input class="fi" id="ah-em" oninput="S.h.email=this.value;save()"></div>
+          <div class="fg"><label class="fl">Back Text / Sub</label><textarea class="fi" id="ah-sub" rows="2" oninput="S.h.sub=this.value;save()"></textarea></div>
           <div class="fg"><label class="fl">QR URL</label><input class="fi" id="ah-qr" placeholder="https://..." oninput="S.h.qrUrl=this.value;updCard();save()"></div>
         </div></div>
       </div>
@@ -1076,12 +1160,34 @@ function gAudio(){if(!actx)actx=new(window.AudioContext||window.webkitAudioConte
 function playClick(t='click'){if(!S||!S.snd)return;try{const ctx=gAudio();const o=ctx.createOscillator();const g=ctx.createGain();o.connect(g);g.connect(ctx.destination);const n=ctx.currentTime;const C={click:[440,.03,.07,'sine'],success:[523,.04,.14,'triangle'],error:[200,.04,.16,'sawtooth'],nav:[660,.03,.06,'sine'],open:[440,.03,.11,'sine']};const[f,v,d,tp]=C[t]||C.click;o.type=tp;o.frequency.setValueAtTime(f,n);g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.start(n);o.stop(n+d);}catch(e){}}
 
 /* ══ QR ══ */
-function drawQR(cv,text){if(!cv||!text)return;const ctx=cv.getContext('2d');const sz=cv.width;const M=21;const cell=Math.floor(sz/M);ctx.fillStyle='rgba(0,0,0,.55)';ctx.fillRect(0,0,sz,sz);function hash(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h)+s.charCodeAt(i);return h>>>0;}const h=hash(text);function finder(ox,oy){ctx.fillStyle='#00E5CC';ctx.fillRect(ox*cell,oy*cell,7*cell,7*cell);ctx.fillStyle='rgba(0,0,0,.55)';ctx.fillRect((ox+1)*cell,(oy+1)*cell,5*cell,5*cell);ctx.fillStyle='#00E5CC';ctx.fillRect((ox+2)*cell,(oy+2)*cell,3*cell,3*cell);}finder(0,0);finder(M-7,0);finder(0,M-7);for(let r=0;r<M;r++)for(let c2=0;c2<M;c2++){if((r<8&&c2<8)||(r<8&&c2>M-9)||(r>M-9&&c2<8))continue;if(r===6||c2===6){if((r+c2)%2===0){ctx.fillStyle='#00E5CC';ctx.fillRect(c2*cell,r*cell,cell,cell);}continue;}if(hash(text+r+','+c2+h)%2){ctx.fillStyle='rgba(0,229,204,.75)';ctx.fillRect(c2*cell,r*cell,cell,cell);}}}
+function drawQR(cv,text){if(!cv)return;const ctx=cv.getContext('2d');const sz=cv.width;const M=21;const cell=Math.floor(sz/M);ctx.fillStyle='#fff';ctx.fillRect(0,0,sz,sz);function hash(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h)+s.charCodeAt(i);return h>>>0;}const h=hash(text||'AIV1');function finder(ox,oy){ctx.fillStyle='#000';ctx.fillRect(ox*cell,oy*cell,7*cell,7*cell);ctx.fillStyle='#fff';ctx.fillRect((ox+1)*cell,(oy+1)*cell,5*cell,5*cell);ctx.fillStyle='#000';ctx.fillRect((ox+2)*cell,(oy+2)*cell,3*cell,3*cell);}finder(0,0);finder(M-7,0);finder(0,M-7);for(let r=0;r<M;r++)for(let c2=0;c2<M;c2++){if((r<8&&c2<8)||(r<8&&c2>M-9)||(r>M-9&&c2<8))continue;if(r===6||c2===6){if((r+c2)%2===0){ctx.fillStyle='#000';ctx.fillRect(c2*cell,r*cell,cell,cell);}continue;}if(hash(text+r+','+c2+h)%2){ctx.fillStyle='#000';ctx.fillRect(c2*cell,r*cell,cell,cell);}}}
 
 /* ══ ID CARD ══ */
-function genBC(){const bc=document.getElementById('h-bc-el');if(!bc)return;bc.innerHTML='';const seed='AIV1';let hash=0;for(let i=0;i<seed.length;i++)hash=(hash*31+seed.charCodeAt(i))&0xffffffff;for(let i=0;i<24;i++){const s=document.createElement('span');const cc=seed.charCodeAt(i%seed.length)||65;s.style.height=(6+((hash^(cc*i*7))&11))+'px';s.style.width=i%7===6?'3px':'2px';bc.appendChild(s);}}
-function updCard(){const h=S.h;st('h-nm-el',h.title);st('h-tl-el',h.titleLine);st('h-av-el',h.avatar);st('h-cl-el',h.clearance);st('h-sr-el',h.serial);const cpEl=document.getElementById('h-cp-el');if(cpEl&&h.serial)cpEl.textContent=h.serial.split('CP: ')[1]||'09192907124';st('h-email-el',h.email||'kramkeas@gmail.com');genBC();drawQR(document.getElementById('id-qr'),h.qrUrl||location.href);}
-function updIntro(){const h=S.h;const ne=document.getElementById('h-ni-el');if(ne){const parts=h.title.split(' ');const last=parts.pop();const first=parts.join(' ');ne.innerHTML=`${first}<br><span class="acc">${last}</span>`;}st('h-it-el',h.role);st('h-res-el',h.resAddr||'');st('h-off-el',h.offAddr||'');st('h-cmp-el',h.company||'');}
+function genBC(){
+  const bc=document.getElementById('h-bc-el');if(!bc)return;bc.innerHTML='';
+  const seed='AIV1';let hash=0;
+  for(let i=0;i<seed.length;i++)hash=(hash*31+seed.charCodeAt(i))&0xffffffff;
+  for(let i=0;i<42;i++){
+    const s=document.createElement('span');
+    const cc=seed.charCodeAt(i%seed.length)||65;
+    const h2=(hash^(cc*i*7))&0xff;
+    s.style.cssText=`display:inline-block;width:${i%5===0?'2.5px':'1.5px'};height:${14+((h2)&8)}px;background:rgba(255,255,255,.88);margin-right:${i%3===0?'1.5px':'0.5px'};border-radius:.5px;vertical-align:bottom;`;
+    bc.appendChild(s);
+  }
+}
+function updCard(){
+  const h=S.h;
+  // Front
+  const nm=document.getElementById('h-nm-el');if(nm)nm.textContent=(h.title||'MARK AIVONE D. ROSALES').toUpperCase();
+  const tl=document.getElementById('h-tl-el');if(tl)tl.textContent=(h.titleLine||'IT SUPPORT SPECIALIST')+' · AIV1';
+  const cp=document.getElementById('h-cp-el');if(cp){const raw=h.serial||'';const num=raw.split('CP: ')[1]||'0919 290 7124';cp.textContent=num.replace(/(\d{4})(\d{3})(\d{4})/,'$1 $2 $3');}
+  // Avatar
+  const av=document.getElementById('h-av-el');
+  if(av){if(h.avatarUrl){av.innerHTML=`<img src="${h.avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:6px;" onerror="this.parentElement.textContent='👤'">`;} else av.textContent=h.avatar||'👤';}
+  genBC();
+  drawQR(document.getElementById('id-qr'),h.qrUrl||location.href);
+}
+function updIntro(){const h=S.h;const ne=document.getElementById('h-ni-el');if(ne){const parts=(h.title||'Mark Aivone D. Rosales').split(' ');const last=parts.pop();const first=parts.join(' ');ne.innerHTML=`${first}<br><span class="acc">${last}</span>`;}st('h-it-el',h.role||'Computer Operator');st('h-res-el',h.resAddr||'');st('h-off-el',h.offAddr||'');st('h-cmp-el',h.company||'');}
 
 /* ══ 3D CARD ══ */
 (()=>{const sc=document.getElementById('isc');const card=document.getElementById('id-card');if(!sc||!card)return;let flipped=false;sc.addEventListener('mousemove',e=>{const r=sc.getBoundingClientRect();const rx=((e.clientY-(r.top+r.height/2))/r.height)*18;const ry=-((e.clientX-(r.left+r.width/2))/r.width)*18;card.style.transition='transform .08s linear';card.style.transform=flipped?`rotateY(${180+ry}deg) rotateX(${rx}deg)`:`rotateY(${ry}deg) rotateX(${rx}deg)`;});sc.addEventListener('mouseleave',()=>{card.style.transition='transform .8s cubic-bezier(.25,.46,.45,.94)';card.style.transform=flipped?'rotateY(180deg)':'rotateY(0)';setTimeout(()=>card.style.transition='transform .08s linear',850);});sc.addEventListener('click',()=>{flipped=!flipped;card.style.transition='transform .7s cubic-bezier(.25,.46,.45,.94)';card.style.transform=flipped?'rotateY(180deg)':'rotateY(0)';setTimeout(()=>card.style.transition='transform .08s linear',750);});(function bob(){if(!sc.matches(':hover')){const t=Date.now()/3000;const base=flipped?'rotateY(180deg)':'rotateY(0)';card.style.transform=`${base} rotateX(${Math.sin(t)*2.5}deg) rotateZ(${Math.sin(t*.7)*.6}deg)`;}requestAnimationFrame(bob);})();})();
@@ -1168,7 +1274,45 @@ function rdrAll(){updCard();updIntro();rdrPosts();rdrSKBars();rdrTools();rdrWork
 
 /* ══ NAV ══ */
 function getAllS(){const r=[{id:'home',label:'Home',action:'home'}];SECS.forEach(s=>{if(iHid(s.id))return;if(s.type==='custom'){const sec=CST.sections.find(x=>x.id===s.id);if(sec)r.push({id:s.id,label:sec.title,action:'msec-'+s.id});}else r.push({id:s.id,label:s.label,action:s.pid});});return r;}
-function rdrNav(){const wrap=document.getElementById('hdr-nav-wrap');const over=document.getElementById('nav-overflow');if(!wrap||!over)return;wrap.innerHTML='';over.innerHTML='';const all=getAllS();const vis=S.navVis||[];const sel=all.filter(s=>vis.includes(s.id));const nonVis=all.filter(s=>!vis.includes(s.id));const tmp=[];wrap.style.visibility='hidden';sel.forEach(s=>{const btn=document.createElement('button');btn.className='nav-btn';btn.textContent=s.label;btn.onclick=()=>{playClick('nav');closeHam();goTo(s.action);};wrap.appendChild(btn);tmp.push({btn,s});});requestAnimationFrame(()=>{wrap.style.visibility='';const wW=wrap.offsetWidth;let tot=0;const ovf=[];tmp.forEach(({btn,s})=>{tot+=btn.offsetWidth+4;if(tot>wW){btn.remove();ovf.push(s);}});[...ovf,...nonVis].forEach(s=>{const btn=document.createElement('button');btn.className='omenu-btn';btn.textContent=s.label;btn.onclick=()=>{playClick('nav');closeHam();goTo(s.action);};over.appendChild(btn);});const lb=document.createElement('button');lb.className='omenu-btn';lb.innerHTML='🔐 Admin';lb.onclick=()=>{closeHam();openAdm();};over.appendChild(lb);rdrANL();});}
+function rdrNav(){
+  const wrap=document.getElementById('hdr-nav-wrap');
+  const over=document.getElementById('nav-overflow');
+  if(!wrap||!over)return;
+  wrap.innerHTML='';over.innerHTML='';
+  const all=getAllS();
+  const vis=S.navVis||[];
+  const sel=all.filter(s=>vis.includes(s.id));
+  const nonVis=all.filter(s=>!vis.includes(s.id));
+  const tmp=[];
+  wrap.style.visibility='hidden';
+  sel.forEach(s=>{
+    const btn=document.createElement('button');
+    btn.className='nav-btn';btn.textContent=s.label;
+    btn.onclick=()=>{playClick('nav');closeHam();goTo(s.action);};
+    wrap.appendChild(btn);tmp.push({btn,s});
+  });
+  requestAnimationFrame(()=>{
+    wrap.style.visibility='';
+    const wW=wrap.offsetWidth;let tot=0;const ovf=[];
+    tmp.forEach(({btn,s})=>{tot+=btn.offsetWidth+4;if(tot>wW){btn.remove();ovf.push(s);}});
+    // Add overflow nav items (deduped)
+    [...ovf,...nonVis].forEach(s=>{
+      const btn=document.createElement('button');
+      btn.className='omenu-btn';btn.textContent=s.label;
+      btn.onclick=()=>{playClick('nav');closeHam();goTo(s.action);};
+      over.appendChild(btn);
+    });
+    // Single admin button — always last, never duplicated
+    if(!over.querySelector('.omenu-admin')){
+      const lb=document.createElement('button');
+      lb.className='omenu-btn omenu-admin';
+      lb.innerHTML='🔐 Admin';
+      lb.onclick=()=>{closeHam();openAdm();};
+      over.appendChild(lb);
+    }
+    rdrANL();
+  });
+}
 if(window.ResizeObserver)new ResizeObserver(()=>rdrNav()).observe(document.getElementById('site-header'));
 addEventListener('resize',rdrNav);
 function toggleHam(){const o=document.getElementById('nav-overflow');if(o){o.classList.toggle('open');if(o.classList.contains('open'))playClick('open');}}
@@ -1410,7 +1554,8 @@ function updStats(){const th=S.posts.reduce((a,p)=>a+p.hearts,0);const hs=docume
 /* ══ HERO EDIT ══ */
 function saveHero(){const get=id=>{const e=document.getElementById(id);return e?e.value.trim():'';};const h=S.h;h.title=get('he-t')||h.title;h.role=get('he-r')||h.role;h.resAddr=get('he-res')||h.resAddr;h.offAddr=get('he-off')||h.offAddr;h.company=get('he-cmp')||h.company;h.clearance=get('he-cl')||h.clearance;h.titleLine=get('he-tl')||h.titleLine;h.avatar=get('he-av')||h.avatar;h.serial=get('he-sr')||h.serial;h.sub=get('he-sub')||h.sub;h.qrUrl=get('he-qr');updCard();updIntro();cm2('m-hero');showToast('Updated ✓');playClick('success');save();}
 function openHeroEditModal(){const h=S.h;const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v||'';};set('he-t',h.title);set('he-r',h.role);set('he-res',h.resAddr);set('he-off',h.offAddr);set('he-cmp',h.company);set('he-cl',h.clearance);set('he-tl',h.titleLine);set('he-av',h.avatar);set('he-sr',h.serial);set('he-qr',h.qrUrl||'');set('he-sub',h.sub);om('m-hero');}
-function popHeroAdmin(){const h=S.h;const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v||'';};set('ah-t',h.title);set('ah-r',h.role);set('ah-res',h.resAddr||'');set('ah-off',h.offAddr||'');set('ah-cmp',h.company||'');set('ah-tl',h.titleLine);set('ah-av',h.avatar);set('ah-cl',h.clearance);set('ah-sr',h.serial);set('ah-em',h.email||'');set('ah-sub',h.sub);set('ah-qr',h.qrUrl||'');}
+function popHeroAdmin(){const h=S.h;const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v||'';};set('ah-t',h.title);set('ah-r',h.role);set('ah-res',h.resAddr||'');set('ah-off',h.offAddr||'');set('ah-cmp',h.company||'');set('ah-tl',h.titleLine);set('ah-av',h.avatar||'👤');set('ah-avurl',h.avatarUrl||'');set('ah-cl',h.clearance);set('ah-sr',h.serial);set('ah-em',h.email||'');set('ah-sub',h.sub);set('ah-qr',h.qrUrl||'');}
+function avatarUpload(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{S.h.avatarUrl=e.target.result;const el=document.getElementById('ah-avurl');if(el)el.value='[uploaded]';updCard();save();showToast('Avatar updated ✓','green');};r.readAsDataURL(f);}
 
 /* ══ ELEM DEFS ══ */
 const EDEFS=[
