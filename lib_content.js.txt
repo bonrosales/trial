@@ -1,0 +1,19 @@
+import defaultContent from "./defaultContent";
+import { readBin } from "./jsonbin";
+
+export async function getSiteContent() {
+  try {
+    const binId = process.env.JSONBIN_BIN_ID;
+    if (!binId) return defaultContent;
+
+    const data = await readBin(binId);
+    return data || defaultContent;
+  } catch {
+    return defaultContent;
+  }
+}
+
+export async function getSeoContent() {
+  const content = await getSiteContent();
+  return content.seo || defaultContent.seo;
+}
