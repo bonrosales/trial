@@ -230,104 +230,87 @@ body{background:var(--dk);color:var(--txt);font-family:'DM Sans',sans-serif;over
   .h-addr-val{font-size:.72rem;}
 }
 
-/* ══════════════════════════════════════════
-   LOADING OVERLAY
-   ══════════════════════════════════════════ */
-#loader-overlay{
-  position:fixed;inset:0;z-index:99999;
-  background:rgba(5,13,20,.97);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  gap:1.8rem;
-  transition:opacity .5s ease, visibility .5s ease;
+
+
+
+/* ══ CONNECT POPUP ══ */
+#conn-popup{
+  position:fixed;inset:0;z-index:99998;
+  background:rgba(5,13,20,.7);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity .4s,visibility .4s;
 }
-#loader-overlay.hidden{
-  opacity:0;visibility:hidden;pointer-events:none;
+#conn-popup.hidden{opacity:0;visibility:hidden;pointer-events:none;}
+#conn-box{
+  background:rgba(8,18,32,.95);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:var(--rl);
+  box-shadow:0 32px 80px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.06);
+  padding:2.2rem 2.5rem;
+  width:min(400px,90vw);
+  display:flex;flex-direction:column;align-items:center;
+  gap:.8rem;
+  text-align:center;
 }
-/* Logo */
-.ld-logo{
-  font-family:'Sora',sans-serif;
-  font-size:2.4rem;font-weight:900;
-  letter-spacing:-.04em;
-  display:flex;align-items:baseline;gap:.08rem;
-  margin-bottom:.2rem;
+#conn-icon{font-size:2.2rem;line-height:1;margin-bottom:.2rem;}
+#conn-title{
+  font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:800;
+  color:#fff;letter-spacing:-.02em;
 }
-.ld-logo span:first-child{color:#1a6fff;}
-.ld-logo span:last-child{color:#00E5CC;}
+#conn-sub{font-size:.72rem;color:var(--txt3);font-weight:500;}
+/* Credential display */
+#conn-creds{
+  width:100%;margin:.3rem 0;
+  display:flex;flex-direction:column;gap:.45rem;
+}
+.conn-field{
+  display:flex;flex-direction:column;gap:.18rem;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:var(--rs);
+  padding:.5rem .75rem;
+  text-align:left;
+}
+.conn-lbl{
+  font-size:.5rem;font-weight:800;color:var(--teal);
+  letter-spacing:.12em;text-transform:uppercase;
+}
+.conn-val{
+  font-size:.72rem;font-weight:600;color:rgba(255,255,255,.82);
+  font-family:monospace;
+  word-break:break-all;
+  line-height:1.4;
+}
 /* Status message */
-.ld-status{
-  display:flex;flex-direction:column;align-items:center;gap:.5rem;
-  min-width:260px;text-align:center;
+#conn-status{
+  font-size:.72rem;font-weight:700;min-height:1.1rem;
+  transition:color .3s;
 }
-.ld-status-icon{
-  font-size:1.6rem;
-  animation:ld-pulse 1.4s ease-in-out infinite;
+/* Connect button */
+#conn-btn{
+  width:100%;padding:.72rem;
+  background:linear-gradient(135deg,var(--teal),#1a6fff);
+  border:none;border-radius:var(--rs);
+  color:#05141e;font-family:'Sora',sans-serif;
+  font-size:.88rem;font-weight:800;
+  cursor:pointer;letter-spacing:.03em;
+  transition:opacity .2s,transform .2s,box-shadow .2s;
+  box-shadow:0 4px 18px rgba(0,229,204,.3);
+  margin-top:.2rem;
 }
-@keyframes ld-pulse{0%,100%{opacity:.5;transform:scale(.92);}50%{opacity:1;transform:scale(1.08);}}
-.ld-msg{
-  font-size:.78rem;font-weight:700;
-  color:rgba(255,255,255,.7);
-  letter-spacing:.08em;
-  min-height:1.2rem;
-  transition:opacity .3s;
+#conn-btn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 6px 24px rgba(0,229,204,.4);}
+#conn-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+/* Skip link */
+#conn-skip{
+  background:none;border:none;
+  font-size:.65rem;color:var(--txt3);
+  cursor:pointer;font-family:'DM Sans',sans-serif;
+  font-weight:600;text-decoration:underline;
+  padding:.2rem;transition:color .2s;
 }
-.ld-sub{
-  font-size:.62rem;color:var(--teal);
-  font-weight:600;letter-spacing:.06em;
-  min-height:1rem;
-}
-/* Progress bar */
-.ld-progress-wrap{
-  width:280px;
-  background:rgba(255,255,255,.08);
-  border-radius:99px;
-  height:4px;
-  overflow:hidden;
-  position:relative;
-}
-.ld-progress-bar{
-  height:100%;
-  background:linear-gradient(90deg,#1a6fff,#00E5CC);
-  border-radius:99px;
-  width:0%;
-  transition:width .4s cubic-bezier(.25,.46,.45,.94);
-  position:relative;
-}
-/* Glow dot on bar tip */
-.ld-progress-bar::after{
-  content:'';
-  position:absolute;right:0;top:50%;transform:translateY(-50%);
-  width:8px;height:8px;border-radius:50%;
-  background:#00E5CC;
-  box-shadow:0 0 8px 2px rgba(0,229,204,.6);
-}
-/* Step list */
-.ld-steps{
-  display:flex;flex-direction:column;gap:.32rem;
-  min-width:260px;
-}
-.ld-step{
-  display:flex;align-items:center;gap:.6rem;
-  font-size:.65rem;font-weight:600;
-  color:rgba(255,255,255,.3);
-  transition:color .3s,opacity .3s;
-}
-.ld-step.active{color:rgba(255,255,255,.75);}
-.ld-step.done{color:#10B981;}
-.ld-step-dot{
-  width:6px;height:6px;border-radius:50%;
-  background:rgba(255,255,255,.2);
-  flex-shrink:0;
-  transition:background .3s,box-shadow .3s;
-}
-.ld-step.active .ld-step-dot{
-  background:var(--teal);
-  box-shadow:0 0 6px rgba(0,229,204,.7);
-  animation:ld-pulse 1s ease-in-out infinite;
-}
-.ld-step.done .ld-step-dot{background:#10B981;box-shadow:none;animation:none;}
+#conn-skip:hover{color:var(--txt);}
 
 /* ─── SECTIONS — ultra-glassy ─── */
 .section{position:relative;z-index:1;padding:4rem 2rem;opacity:0;transform:translateY(28px);transition:opacity .7s,transform .7s;}
@@ -1045,22 +1028,25 @@ body{background:var(--dk);color:var(--txt);font-family:'DM Sans',sans-serif;over
 <canvas id="qc"></canvas>
 <div id="scroll-progress"></div>
 
-<!-- ══ LOADING OVERLAY ══ -->
-<div id="loader-overlay">
-  <div class="ld-logo"><span>AIV</span><span>1</span></div>
-  <div class="ld-status">
-    <div class="ld-status-icon" id="ld-icon">🔌</div>
-    <div class="ld-msg" id="ld-msg">Initializing...</div>
-    <div class="ld-sub" id="ld-sub">AIV1 · Autonomous Intelligence Vision One</div>
-  </div>
-  <div class="ld-progress-wrap">
-    <div class="ld-progress-bar" id="ld-bar"></div>
-  </div>
-  <div class="ld-steps">
-    <div class="ld-step" id="ldst-0"><div class="ld-step-dot"></div><span>Connecting to server</span></div>
-    <div class="ld-step" id="ldst-1"><div class="ld-step-dot"></div><span>Loading data</span></div>
-    <div class="ld-step" id="ldst-2"><div class="ld-step-dot"></div><span>Rendering sections</span></div>
-    <div class="ld-step" id="ldst-3"><div class="ld-step-dot"></div><span>Finalizing</span></div>
+<!-- ══ CONNECT POPUP ══ -->
+<div id="conn-popup">
+  <div id="conn-box">
+    <div id="conn-icon">🔌</div>
+    <div id="conn-title">Connect to Server</div>
+    <div id="conn-sub">Fetch live data from JSONBin</div>
+    <div id="conn-creds">
+      <div class="conn-field">
+        <span class="conn-lbl">Bin ID</span>
+        <span class="conn-val" id="conn-bin-display"></span>
+      </div>
+      <div class="conn-field">
+        <span class="conn-lbl">API Key</span>
+        <span class="conn-val" id="conn-key-display"></span>
+      </div>
+    </div>
+    <div id="conn-status"></div>
+    <button id="conn-btn" onclick="doConnect()">⚡ Connect</button>
+    <button id="conn-skip" onclick="closeConnPopup()">Skip — use local data</button>
   </div>
 </div>
 
@@ -1512,7 +1498,7 @@ body{background:var(--dk);color:var(--txt);font-family:'DM Sans',sans-serif;over
         <div class="atp" id="set-tab-jsonbin"><div class="adc">
           <p style="font-size:.8rem;color:var(--txt3);margin-bottom:.85rem;line-height:1.7;">Connect to <strong style="color:var(--teal);">jsonbin.io</strong> for cloud sync. Create a free account at <a href="https://jsonbin.io" target="_blank" style="color:var(--teal);">jsonbin.io</a>, create a bin, then paste your credentials below.</p>
           <div class="fg"><label class="fl">Bin ID</label><input class="fi" type="text" id="jb-binid" placeholder="e.g. 64f3a1b2ad1234567890abcd" autocomplete="off"></div>
-          <div class="fg"><label class="fl">Master API Key</label><input class="fi" type="password" id="jb-apikey" placeholder="$2a$10$..." autocomplete="off"></div>
+          <div class="fg"><label class="fl">Master API Key</label><input class="fi" type="text" id="jb-apikey" placeholder="$2a$10$..." autocomplete="off" style="font-family:monospace;font-size:.72rem;"></div>
           <div style="display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.6rem;">
             <button class="btn btl sm" onclick="saveJBCreds()">💾 Save &amp; Connect</button>
             <button class="btn sm" style="border-color:rgba(255,255,255,.1);color:var(--txt2);" onclick="testJB()">⚡ Test</button>
@@ -2375,88 +2361,62 @@ function updFC(val){const e=document.getElementById('fcp');if(e)e.textContent=va
 function showToast(msg,type=''){const t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.className='toast'+(type?' '+type:'');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 
 /* ══ INIT ══ */
-/* ── Loader helpers ── */
-function ldSet(pct,icon,msg,sub){
-  const bar=document.getElementById('ld-bar');
-  const ic=document.getElementById('ld-icon');
-  const ms=document.getElementById('ld-msg');
-  const sb=document.getElementById('ld-sub');
-  if(bar)bar.style.width=pct+'%';
-  if(ic)ic.textContent=icon;
-  if(ms)ms.textContent=msg;
-  if(sb&&sub)sb.textContent=sub;
+/* ══ CONNECT POPUP LOGIC ══ */
+function showConnPopup(){
+  const popup=document.getElementById('conn-popup');
+  if(!popup)return;
+  // Show hardcoded credentials visibly
+  const binEl=document.getElementById('conn-bin-display');
+  const keyEl=document.getElementById('conn-key-display');
+  if(binEl)binEl.textContent=JB_DEFAULT_BIN;
+  if(keyEl)keyEl.textContent=JB_DEFAULT_KEY;
+  popup.classList.remove('hidden');
 }
-function ldStep(idx,state){
-  // state: 'active' | 'done'
-  for(let i=0;i<=idx;i++){
-    const el=document.getElementById('ldst-'+i);
-    if(!el)continue;
-    el.className='ld-step'+(i<idx?' done':' '+state);
-  }
+function closeConnPopup(){
+  const popup=document.getElementById('conn-popup');
+  if(popup)popup.classList.add('hidden');
 }
-function ldHide(){
-  const ov=document.getElementById('loader-overlay');
-  if(ov)ov.classList.add('hidden');
-}
-
-async function init(){
-  // ── Step 0: Connecting to server ──
-  ldStep(0,'active');
-  ldSet(8,'🔌','Connecting to server...','Reaching JSONBin cloud storage');
-  let loaded=false;
-  const mongoData=await mongoRead();
-
-  if(mongoData){
-    ldStep(0,'done');
-    ldSet(30,'✅','Server connected!','Data received from JSONBin');
-    await new Promise(r=>setTimeout(r,280));
-    // ── Step 1: Loading data ──
-    ldStep(1,'active');
-    ldSet(45,'📦','Loading your data...','Applying saved configuration');
-    await new Promise(r=>setTimeout(r,180));
-    loadData(mongoData);loaded=true;
-    ldStep(1,'done');
-    ldSet(60,'✔ ','Data loaded!','');
-    await new Promise(r=>setTimeout(r,200));
+async function doConnect(){
+  const btn=document.getElementById('conn-btn');
+  const status=document.getElementById('conn-status');
+  if(btn)btn.disabled=true;
+  if(btn)btn.textContent='⏳ Connecting...';
+  if(status){status.textContent='Reaching JSONBin...';status.style.color='var(--teal)';}
+  const data=await mongoRead();
+  if(data){
+    if(status){status.textContent='✅ Connected! Loading data...';status.style.color='#10B981';}
+    loadData(data);
+    rdrAll_fast();
+    await new Promise(r=>setTimeout(r,600));
+    closeConnPopup();
+    showToast('Live data loaded ✓','green');
   } else {
-    // Server offline — try local fallback
-    ldStep(0,'done');
-    const errDetail=lastMongoErr?` (${lastMongoErr})`:'';
-    ldSet(25,'📡',`Server offline${errDetail}...`,'Falling back to local storage');
-    await new Promise(r=>setTimeout(r,300));
-    ldStep(1,'active');
-    ldSet(40,'💾','Loading local data...','Reading from browser storage');
-    if(!loaded){loaded=await loadDJ();}
-    if(!loaded)loadSaved();
-    ldStep(1,'done');
-    ldSet(58,'✔ ','Local data ready','');
-    await new Promise(r=>setTimeout(r,150));
+    if(status){
+      status.textContent='✕ '+( lastMongoErr||'Connection failed');
+      status.style.color='var(--coral)';
+    }
+    if(btn){btn.disabled=false;btn.textContent='⚡ Retry';}
   }
+}
 
-  // ── Step 2: Rendering sections ──
-  ldStep(2,'active');
-  ldSet(68,'⚡','Rendering sections...','Building your portfolio');
-  await new Promise(r=>setTimeout(r,80));
+function rdrAll_fast(){
   rdrPO();rdrSS();rdrSOP();rdrNav();
   rdrPosts();rdrFSoc();rdrFL();
   rdrSKBars();rdrTools();rdrWorks();
   rdrCerts();rdrStats();rdrOtherWebs();rdrGaming();rdrWorkExp();
-  ldStep(2,'done');
-  ldSet(88,'🎨','Sections ready!','');
-  await new Promise(r=>setTimeout(r,80));
-
-  // ── Step 3: Finalizing ──
-  ldStep(3,'active');
-  ldSet(94,'🚀','Finalizing...','Starting animations');
   initAN();updCard();updIntro();updStats();
   rdrContactSocials();
   setTimeout(()=>{document.querySelectorAll('.section').forEach(el=>sObs.observe(el));},120);
-  ldStep(3,'done');
-  ldSet(100,'✅','Ready!','Welcome to AIV1');
-  await new Promise(r=>setTimeout(r,420));
+}
 
-  // ── Hide overlay ──
-  ldHide();
+function init(){
+  // Load local/data.json first — renders immediately
+  let loaded=false;
+  try{const r=localStorage.getItem(DBK);if(r){loadData(JSON.parse(r));loaded=true;}}catch(e){}
+  if(!loaded){loadDJ().then(ok=>{if(ok)rdrAll_fast();});}
+  rdrAll_fast();
+  // Show connect popup after a short delay so the page renders first
+  setTimeout(showConnPopup, 400);
 }
 init();
 </script>
