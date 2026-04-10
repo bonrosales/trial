@@ -1782,11 +1782,73 @@ function movSec(id,dir){const i=SECS.findIndex(s=>s.id===id);if(i===-1)return;co
 
 /* ══ DB + JSONBIN ══ */
 const JBK_BIN='aiv1_jb_binid';const JBK_API='aiv1_jb_apikey';
-const JSONBIN={get binId(){return localStorage.getItem(JBK_BIN)||'69d13eee36566621a87bf035';},get apiKey(){return localStorage.getItem(JBK_API)||'$2a$10$oC2hITt.J6Hua7Zyv8n2/.COKA0TXaqjX/ejTDYjbVEbAGEZXxUm';}};
+/* Hardcoded fallback credentials — always available even on fresh browser */
+const JB_DEFAULT_BIN='69d13eee36566621a87bf035';
+const JB_DEFAULT_KEY='$2a$10$oC2hITt.J6Hua7Zyv8n2/.COKA0TXaqjX/ejTDYjbVEbAGEZXxUm';
+const JSONBIN={
+  get binId(){return localStorage.getItem(JBK_BIN)||JB_DEFAULT_BIN;},
+  get apiKey(){return localStorage.getItem(JBK_API)||JB_DEFAULT_KEY;}
+};
 let mongoOK=false;
+let lastMongoErr='';
 
-async function mongoRead(){if(!JSONBIN.binId)return null;try{const r=await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN.binId}/latest`,{headers:{'X-Master-Key':JSONBIN.apiKey}});if(!r.ok)return null;const d=await r.json();mongoOK=true;updMongoUI('ok');return d.record||null;}catch(e){mongoOK=false;updMongoUI('err');return null;}}
-async function mongoWrite(data){if(!JSONBIN.binId)return;try{updMongoUI('sync');const r=await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN.binId}`,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN.apiKey},body:JSON.stringify(data)});if(!r.ok)throw new Error('fail');mongoOK=true;updMongoUI('ok');}catch(e){mongoOK=false;updMongoUI('err');}}
+async function mongoRead(){
+  const bid=JSONBIN.binId;
+  const key=JSONBIN.apiKey;
+  if(!bid||!key){lastMongoErr='No credentials';return null;}
+  for(let attempt=1;attempt<=2;attempt++){
+    try{
+      ldSet(8+(attempt-1)*6,'🔌',
+        attempt===1?'Connecting to JSONBin...':'Retrying connection...',
+        `Bin: ${bid.slice(0,8)}…`);
+      const r=await fetch(`https://api.jsonbin.io/v3/b/${bid}/latest`,{
+        headers:{
+          'X-Master-Key':key,
+          'X-Bin-Meta':'false'
+        }
+      });
+      if(!r.ok){
+        const txt=await r.text().catch(()=>'');
+        lastMongoErr=`HTTP ${r.status}`;
+        if(r.status===401){lastMongoErr='Invalid API key (401)';break;}
+        if(r.status===404){lastMongoErr='Bin not found (404)';break;}
+        if(attempt<2){await new Promise(res=>setTimeout(res,800));continue;}
+        return null;
+      }
+      const d=await r.json();
+      mongoOK=true;updMongoUI('ok');
+      lastMongoErr='';
+      /* JSONBin v3 returns {record:{...}} OR just the record directly
+         depending on whether X-Bin-Meta:false is set */
+      return d.record||d;
+    }catch(e){
+      lastMongoErr=e.message||'Network error';
+      if(attempt<2){await new Promise(res=>setTimeout(res,900));continue;}
+      mongoOK=false;updMongoUI('err');
+      return null;
+    }
+  }
+  mongoOK=false;updMongoUI('err');
+  return null;
+}
+
+async function mongoWrite(data){
+  if(!JSONBIN.binId)return;
+  try{
+    updMongoUI('sync');
+    const r=await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN.binId}`,{
+      method:'PUT',
+      headers:{
+        'Content-Type':'application/json',
+        'X-Master-Key':JSONBIN.apiKey,
+        'X-Bin-Versioning':'false'
+      },
+      body:JSON.stringify(data)
+    });
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    mongoOK=true;updMongoUI('ok');
+  }catch(e){mongoOK=false;updMongoUI('err');}
+}
 function updMongoUI(status){mongoOK=(status==='ok');const el=document.getElementById('mongo-status-el');if(!el)return;const cfg={ok:{cls:'ok',txt:'● JSONBin Connected'},err:{cls:'err',txt:'● JSONBin Offline'},sync:{cls:'sync',txt:'↻ Syncing…'}};const c=cfg[status]||cfg.err;el.className='mongo-status '+c.cls;el.textContent=c.txt;}
 function saveJBCreds(){const bid=(document.getElementById('jb-binid')||{value:''}).value.trim();const ak=(document.getElementById('jb-apikey')||{value:''}).value.trim();if(!bid||!ak){setJBStatus('Enter both Bin ID and API Key','var(--coral)');return;}localStorage.setItem(JBK_BIN,bid);localStorage.setItem(JBK_API,ak);setJBStatus('Saved! Testing connection…','var(--teal)');testJB();}
 async function testJB(){const bid=JSONBIN.binId;const ak=JSONBIN.apiKey;if(!bid||!ak){setJBStatus('No credentials saved yet.','var(--coral)');return;}setJBStatus('Testing…','var(--teal)');try{const r=await fetch(`https://api.jsonbin.io/v3/b/${bid}/latest`,{headers:{'X-Master-Key':ak}});if(r.ok){mongoOK=true;updDBS();setJBStatus('✓ Connected successfully!','#10B981');updMongoUI('ok');}else{const d=await r.json().catch(()=>({}));setJBStatus('✕ Error: '+(d.message||r.status),'var(--coral)');mongoOK=false;updMongoUI('err');}}catch(e){setJBStatus('✕ Network error.','var(--coral)');mongoOK=false;updMongoUI('err');}}
@@ -2359,7 +2421,8 @@ async function init(){
   } else {
     // Server offline — try local fallback
     ldStep(0,'done');
-    ldSet(25,'📡','Server offline — loading local...','Falling back to local storage');
+    const errDetail=lastMongoErr?` (${lastMongoErr})`:'';
+    ldSet(25,'📡',`Server offline${errDetail}...`,'Falling back to local storage');
     await new Promise(r=>setTimeout(r,300));
     ldStep(1,'active');
     ldSet(40,'💾','Loading local data...','Reading from browser storage');
