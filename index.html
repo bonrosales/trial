@@ -348,20 +348,6 @@ body::after {
 .hbb-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.25);cursor:pointer;transition:background .25s,transform .25s,width .25s;border:none;padding:0;}
 .hbb-dot.active{background:var(--teal);transform:scale(1.2);width:18px;border-radius:4px;}
 
-/* ══ CONNECT POPUP ══ */
-#conn-popup{position:fixed;inset:0;z-index:99998;background:rgba(5,13,20,.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;transition:opacity .4s,visibility .4s;}
-#conn-popup.hidden{opacity:0;visibility:hidden;pointer-events:none;}
-#conn-box{background:rgba(8,18,32,.95);border:1px solid rgba(255,255,255,.12);border-radius:var(--rl);box-shadow:0 32px 80px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.06);padding:2.2rem 2.5rem;width:min(400px,90vw);display:flex;flex-direction:column;align-items:center;gap:.8rem;text-align:center;}
-#conn-icon{font-size:2.2rem;line-height:1;margin-bottom:.2rem;}
-#conn-title{font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:800;color:#fff;letter-spacing:-.02em;}
-#conn-sub{font-size:.72rem;color:var(--txt3);font-weight:500;}
-#conn-status{font-size:.72rem;font-weight:700;min-height:1.1rem;transition:color .3s;}
-#conn-btn{width:100%;padding:.72rem;background:linear-gradient(135deg,var(--teal),#1a6fff);border:none;border-radius:var(--rs);color:#05141e;font-family:'Sora',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;letter-spacing:.03em;transition:opacity .2s,transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(0,229,204,.3);margin-top:.2rem;}
-#conn-btn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 6px 24px rgba(0,229,204,.4);}
-#conn-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
-#conn-skip{background:none;border:none;font-size:.65rem;color:var(--txt3);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;text-decoration:underline;padding:.2rem;transition:color .2s;}
-#conn-skip:hover{color:var(--txt);}
-
 /* ─── SECTIONS ─── */
 .section{position:relative;z-index:1;padding:4rem 2rem;opacity:0;transform:translateY(28px);transition:opacity .7s,transform .7s;}
 .section.visible{opacity:1;transform:translateY(0);}
@@ -790,21 +776,51 @@ body::after {
   }
 }
 
+
+/* ─── SERVER STATUS BADGE ─── */
+.ss-online,.ss-offline,.ss-syncing{
+  display:inline-flex;align-items:center;gap:.32rem;
+  font-size:.6rem;font-weight:800;letter-spacing:.07em;
+  padding:.2rem .6rem;border-radius:99px;
+  transition:background .4s,color .4s,border-color .4s,box-shadow .3s;
+  user-select:none;
+  border:1px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.05);
+  color:var(--txt3);
+}
+.ss-online,.ss-offline,.ss-syncing{cursor:pointer;}
+.ss-online:hover{box-shadow:0 0 12px rgba(0,229,204,.2);}
+.ss-offline:hover{box-shadow:0 0 12px rgba(240,77,92,.2);}
+.ss-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--txt3);
+  flex-shrink:0;
+  transition:background .4s,box-shadow .4s;
+}
+/* Online */
+.ss-online{background:rgba(0,229,204,.08);border-color:rgba(0,229,204,.28);color:var(--teal);}
+.ss-online .ss-dot{background:var(--teal);box-shadow:0 0 6px rgba(0,229,204,.7);animation:ssPulse 2s ease-in-out infinite;}
+/* Offline */
+.ss-offline{background:rgba(240,77,92,.08);border-color:rgba(240,77,92,.28);color:var(--coral);}
+.ss-offline .ss-dot{background:var(--coral);box-shadow:0 0 5px rgba(240,77,92,.5);}
+/* Syncing */
+.ss-syncing{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.28);color:#F59E0B;}
+.ss-syncing .ss-dot{background:#F59E0B;animation:ssSpin .8s linear infinite;}
+/* Legacy selector for footer badge */
+#server-status{display:inline-flex;align-items:center;gap:.32rem;}
+@keyframes ssPulse{
+  0%,100%{opacity:1;box-shadow:0 0 6px rgba(0,229,204,.7);}
+  50%{opacity:.6;box-shadow:0 0 14px rgba(0,229,204,.95);}
+}
+@keyframes ssSpin{
+  0%{opacity:1;}25%{opacity:.3;}50%{opacity:1;}75%{opacity:.3;}100%{opacity:1;}
+}
+
 </style>
 </head>
 <body>
 <canvas id="qc"></canvas>
 <div id="scroll-progress"></div>
-<div id="conn-popup">
-  <div id="conn-box">
-    <div id="conn-icon">🔌</div>
-    <div id="conn-title">Connect to Server</div>
-    <div id="conn-sub">Load live data from JSONBin cloud</div>
-    <div id="conn-status"></div>
-    <button id="conn-btn" onclick="doConnect()">⚡ Connect</button>
-    <button id="conn-skip" onclick="closeConnPopup()">Skip — use local data</button>
-  </div>
-</div>
 <header id="site-header">
   <a class="hdr-logo" href="#" onclick="goHome();return false;"><span class="aiv">AIV</span><span class="acc">1</span></a>
   <div id="hdr-nav-wrap"></div>
@@ -821,6 +837,12 @@ body::after {
   </div>
   <div class="hero-content">
     <div class="hero-intro">
+      
+      <!-- Server Status Badge in Hero -->
+      <div id="hero-ss" class="ss-offline" onclick="autoConnect()" style="cursor:pointer;margin-bottom:.45rem;width:fit-content;">
+        <div class="ss-dot"></div>
+        <span id="hero-ss-label">● Server Offline</span>
+      </div>
       <div class="h-role" id="h-it-el">Computer Operator</div>
       <div class="h-name" id="h-ni-el">Mark Aivone<br><span class="acc">D. Rosales</span></div>
       <div class="h-addr-grid" id="h-addr-grid">
@@ -840,6 +862,13 @@ body::after {
         <button class="hbb-btn" onclick="hgalNav(1)">&#8250;</button>
       </div>
     </div>
+    <!-- Server Status Badge in Hero -->
+    <div id="hero-server-badge" style="position:absolute;bottom:1.1rem;left:1.2rem;z-index:10;display:flex;align-items:center;gap:.4rem;">
+      <div id="hero-ss" class="ss-syncing" style="display:inline-flex;align-items:center;gap:.32rem;font-size:.6rem;font-weight:800;letter-spacing:.07em;padding:.2rem .6rem;border-radius:99px;cursor:pointer;transition:all .3s;" onclick="autoConnect()" title="Click to reconnect">
+        <div class="ss-dot" style="width:6px;height:6px;border-radius:50%;flex-shrink:0;"></div>
+        <span id="hero-ss-label">↻ Connecting…</span>
+      </div>
+    </div>
   </div>
 </section>
 <div id="psc">
@@ -853,7 +882,7 @@ body::after {
   <section class="section" id="gaming-section" style="display:none;"><div class="sec-inner"><div class="gc"><div class="slbl">// Player Profile</div><h2 class="stitle">Gaming</h2><p class="ssub">Hover a card to see full details.</p><div class="game-grid" id="game-grid"></div></div></div></section>
   <section class="section" id="contact" style="display:none;"><div class="sec-inner"><div class="gc"><div class="slbl">// Establish Link</div><h2 class="stitle">Get In Touch</h2><div class="contact-grid"><div class="contact-form-col"><div class="fg"><label class="fl">Your Name</label><input class="fi" id="cn" placeholder="Your name"></div><div class="fg"><label class="fl">Email</label><input class="fi" id="ce" placeholder="you@email.com"></div><div class="fg"><label class="fl">Message</label><textarea class="fi" id="cm" rows="4" placeholder="Your message..."></textarea></div><button class="btn btl" onclick="sendForm()">Send Message →</button><div id="cs" style="margin-top:.6rem;font-size:.74rem;display:none;font-weight:700;"></div></div><div class="contact-soc-wrap"><div class="contact-soc-header"><div class="contact-soc-title">// Connect &amp; Follow</div></div><div class="contact-soc-grid" id="csoc-grid"></div></div></div></div></div></section>
 </div>
-<footer id="sf"><div class="fi2"><div class="fgr"><div><div class="flt"><span style="color:#1a6fff;">AIV</span><span class="acc">1</span></div><p id="ftag" style="color:var(--txt3);font-size:.76rem;line-height:1.7;max-width:188px;">Autonomous Intelligence Vision One. Built for the Operator.</p><div class="fso" id="fso"></div></div><div><div class="fct">Navigate</div><ul class="fls" id="fnl"></ul></div><div><div class="fct">Legal</div><ul class="fls-legal" id="fll"></ul></div></div><div class="fb"><span class="fc" id="fcp">© 2025 AIV1. All rights reserved.</span><span style="font-size:.56rem;color:var(--txt3);font-weight:700;">v5.2 · Quantum Build</span></div></div></footer>
+<footer id="sf"><div class="fi2"><div class="fgr"><div><div class="flt"><span style="color:#1a6fff;">AIV</span><span class="acc">1</span></div><p id="ftag" style="color:var(--txt3);font-size:.76rem;line-height:1.7;max-width:188px;">Autonomous Intelligence Vision One. Built for the Operator.</p><div class="fso" id="fso"></div></div><div><div class="fct">Navigate</div><ul class="fls" id="fnl"></ul></div><div><div class="fct">Legal</div><ul class="fls-legal" id="fll"></ul></div></div><div class="fb"><span class="fc" id="fcp">© 2025 AIV1. All rights reserved.</span><div style="display:flex;align-items:center;gap:.55rem;flex-wrap:wrap;"><div id="server-status" class="ss-offline"><div class="ss-dot"></div><span id="ss-label">● Server Offline</span></div><span style="font-size:.56rem;color:var(--txt3);font-weight:700;">v5.2 · Quantum Build</span></div></div></div></footer>
 <div id="ap"><div class="phb"><button class="bb" onclick="closeAP()">← Back</button><h2 style="font-family:'Sora',sans-serif;font-size:1.2rem;color:var(--txt);font-weight:800;">All Dispatches</h2></div><div class="api"><div class="pgrid" id="apg"></div></div></div>
 <div class="mo" id="m-login"><div class="modal"><div class="mhdr"><span class="mtitle">🔐 Admin Access</span><button class="mclose" onclick="cm2('m-login')">✕</button></div><div class="mbody"><div class="fg"><label class="fl">Admin Key</label><input class="fi" type="password" id="akin" placeholder="Enter admin key" onkeydown="if(event.key==='Enter')verAdmin()"><div style="color:var(--coral);font-size:.66rem;margin-top:.22rem;display:none;" id="akerr">Invalid key.</div></div></div><div class="mftr"><button class="btn btl sm" onclick="verAdmin()">Authenticate</button></div></div></div>
 <div class="mo" id="m-conf"><div class="cbox"><p id="confmsg">Delete?</p><div class="br"><button class="btn bcr sm" onclick="confYes()">Delete</button><button class="btn bgl sm" onclick="cm2('m-conf')">Cancel</button></div></div></div>
@@ -965,7 +994,7 @@ const JB_DEFAULT_KEY='$2a$10$oC2hITt.J6Hua7Zyv8n2/.COKA0TXaqjX/ejTDYjbVEbAGEZXxU
 const JSONBIN={get binId(){return localStorage.getItem(JBK_BIN)||JB_DEFAULT_BIN;},get apiKey(){return localStorage.getItem(JBK_API)||JB_DEFAULT_KEY;}};
 let mongoOK=false,lastMongoErr='';
 async function mongoRead(){const bid=JSONBIN.binId;const key=JSONBIN.apiKey;if(!bid||!key){return null;}for(let attempt=1;attempt<=2;attempt++){try{const r=await fetch(`https://api.jsonbin.io/v3/b/${bid}/latest`,{headers:{'X-Master-Key':key,'X-Bin-Meta':'false'}});if(!r.ok){if(r.status===401||r.status===404)break;if(attempt<2){await new Promise(res=>setTimeout(res,800));continue;}return null;}const d=await r.json();mongoOK=true;updMongoUI('ok');return d.record||d;}catch(e){if(attempt<2){await new Promise(res=>setTimeout(res,900));continue;}mongoOK=false;updMongoUI('err');return null;}}mongoOK=false;updMongoUI('err');return null;}
-async function mongoWrite(data){if(!JSONBIN.binId)return;try{updMongoUI('sync');const r=await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN.binId}`,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN.apiKey,'X-Bin-Versioning':'false'},body:JSON.stringify(data)});if(!r.ok)throw new Error('HTTP '+r.status);mongoOK=true;updMongoUI('ok');}catch(e){mongoOK=false;updMongoUI('err');}}
+async function mongoWrite(data){if(!JSONBIN.binId)return;try{updMongoUI('sync');const r=await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN.binId}`,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN.apiKey,'X-Bin-Versioning':'false'},body:JSON.stringify(data)});if(!r.ok)throw new Error('HTTP '+r.status);mongoOK=true;updMongoUI('ok');updServerStatus('online');}catch(e){mongoOK=false;updMongoUI('err');updServerStatus('offline');}}
 function updMongoUI(status){mongoOK=(status==='ok');const el=document.getElementById('mongo-status-el');if(!el)return;const cfg={ok:{cls:'ok',txt:'● JSONBin Connected'},err:{cls:'err',txt:'● JSONBin Offline'},sync:{cls:'sync',txt:'↻ Syncing…'}};const c=cfg[status]||cfg.err;el.className='mongo-status '+c.cls;el.textContent=c.txt;}
 function saveJBCreds(){const bid=(document.getElementById('jb-binid')||{value:''}).value.trim();const ak=(document.getElementById('jb-apikey')||{value:''}).value.trim();if(!bid||!ak){setJBStatus('Enter both Bin ID and API Key','var(--coral)');return;}localStorage.setItem(JBK_BIN,bid);localStorage.setItem(JBK_API,ak);setJBStatus('Saved! Testing...','var(--teal)');testJB();}
 async function testJB(){const bid=JSONBIN.binId;const ak=JSONBIN.apiKey;if(!bid||!ak){setJBStatus('No credentials.','var(--coral)');return;}setJBStatus('Testing…','var(--teal)');try{const r=await fetch(`https://api.jsonbin.io/v3/b/${bid}/latest`,{headers:{'X-Master-Key':ak}});if(r.ok){mongoOK=true;updDBS();setJBStatus('✓ Connected!','#10B981');updMongoUI('ok');}else{const d=await r.json().catch(()=>({}));setJBStatus('✕ Error: '+(d.message||r.status),'var(--coral)');mongoOK=false;updMongoUI('err');}}catch(e){setJBStatus('✕ Network error.','var(--coral)');mongoOK=false;updMongoUI('err');}}
@@ -1159,10 +1188,64 @@ function goTo(id){if(!id||id==='home'){goHome();return;}const el=document.getEle
 function updFC(val){const e=document.getElementById('fcp');if(e)e.textContent=val;}
 function showToast(msg,type=''){const t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.className='toast'+(type?' '+type:'');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
 
-/* ══ CONNECT POPUP ══ */
-function showConnPopup(){const popup=document.getElementById('conn-popup');if(popup)popup.classList.remove('hidden');}
-function closeConnPopup(){const popup=document.getElementById('conn-popup');if(popup)popup.classList.add('hidden');}
-async function doConnect(){const btn=document.getElementById('conn-btn');const status=document.getElementById('conn-status');const setS=(msg,col)=>{if(status){status.textContent=msg;status.style.color=col||'var(--teal)';}};if(btn){btn.disabled=true;btn.textContent='⏳ Connecting...';}setS('Reaching JSONBin...','var(--teal)');const bid=JSONBIN.binId;const ak=JSONBIN.apiKey;try{const r=await fetch(`https://api.jsonbin.io/v3/b/${bid}/latest`,{headers:{'X-Master-Key':ak}});if(r.ok){const d=await r.json();const record=d.record||d;mongoOK=true;updMongoUI('ok');setS('✅ Connected! Loading data...','#10B981');loadData(record);rdrAll_fast();await new Promise(res=>setTimeout(res,700));closeConnPopup();showToast('Live data loaded ✓','green');}else{const err=await r.json().catch(()=>({}));mongoOK=false;updMongoUI('err');setS('✕ Error: '+(err.message||r.status),'var(--coral)');if(btn){btn.disabled=false;btn.textContent='⚡ Retry';}}}catch(e){mongoOK=false;updMongoUI('err');setS('✕ Network error','var(--coral)');if(btn){btn.disabled=false;btn.textContent='⚡ Retry';}}}
+
+/* ══ AUTO-CONNECT TO JSONBIN (no popup) ══ */
+function updServerStatus(state, msg){
+  const labels = {
+    online:  '● Server Online',
+    offline: '● Server Offline',
+    syncing: '↻ Syncing…'
+  };
+  const text = msg || labels[state] || labels.offline;
+  // Footer badge
+  const el = document.getElementById('server-status');
+  const lb = document.getElementById('ss-label');
+  if(el) el.className = 'ss-' + state;
+  if(lb) lb.textContent = text;
+  // Hero badge
+  const hel = document.getElementById('hero-ss');
+  const hlb = document.getElementById('hero-ss-label');
+  if(hel) hel.className = 'ss-' + state;
+  if(hlb) hlb.textContent = text;
+  // Hero badge: show "Tap to retry" hint when offline
+  if(hel) hel.title = state === 'offline' ? 'Tap to reconnect' : state === 'online' ? 'Connected to JSONBin' : 'Syncing…';
+}
+
+async function autoConnect(){
+  const bid = JSONBIN.binId;
+  const ak  = JSONBIN.apiKey;
+  if(!bid || !ak){ updServerStatus('offline'); return; }
+  updServerStatus('syncing','↻ Connecting…');
+  try{
+    const r = await fetch(`https://api.jsonbin.io/v3/b/${bid}/latest`,{
+      headers:{'X-Master-Key':ak,'X-Bin-Meta':'false'}
+    });
+    if(r.ok){
+      const d = await r.json();
+      const record = d.record || d;
+      mongoOK = true;
+      updMongoUI('ok');
+      updServerStatus('online');
+      loadData(record);
+      rdrAll_fast();
+      showToast('Server connected ✓','green');
+    } else {
+      mongoOK = false;
+      updMongoUI('err');
+      updServerStatus('offline', '● Server Offline (' + r.status + ')');
+    }
+  } catch(e){
+    mongoOK = false;
+    updMongoUI('err');
+    updServerStatus('offline','● Server Offline');
+  }
+}
+
+// Keep these as no-ops for any lingering calls
+function showConnPopup(){}
+function closeConnPopup(){}
+function doConnect(){ autoConnect(); }
+
 function rdrAll_fast(){rdrPO();rdrSS();rdrSOP();rdrNav();rdrPosts();rdrFSoc();rdrFL();rdrSKBars();rdrTools();rdrWorks();rdrCerts();rdrStats();rdrOtherWebs();rdrGaming();rdrWorkExp();initAN();updCard();updIntro();updStats();rdrContactSocials();setTimeout(()=>{document.querySelectorAll('.section').forEach(el=>sObs.observe(el));buildSidebar();},120);}
 
 function init(){
@@ -1170,9 +1253,17 @@ function init(){
   try{const r=localStorage.getItem(DBK);if(r){loadData(JSON.parse(r));loaded=true;}}catch(e){}
   if(!loaded){loadDJ().then(ok=>{if(ok)rdrAll_fast();});}
   rdrAll_fast();
-  setTimeout(showConnPopup,400);
+  // Auto-connect to JSONBin silently on load
+  setTimeout(autoConnect, 800);
+  // Retry every 30s if offline
+  setInterval(()=>{ if(!mongoOK) autoConnect(); }, 30000);
 }
 init();
+
+// Auto-reconnect every 30s when offline
+setInterval(()=>{
+  if(!mongoOK) autoConnect();
+}, 30000);
 
 /* ═══════════════════════════════════════
    ALL 11 VISUAL UPGRADES — INTEGRATED
